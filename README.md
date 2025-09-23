@@ -1,6 +1,6 @@
-# @overland/collection-registry
+# @alloylab/collection-registry
 
-[![npm version](https://badge.fury.io/js/%40overland%2Fcollection-registry.svg)](https://badge.fury.io/js/%40overland%2Fcollection-registry)
+[![npm version](https://badge.fury.io/js/%40alloylab%2Fcollection-registry.svg)](https://badge.fury.io/js/%40alloy-lab%2Fcollection-registry)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Automated code generation from Payload CMS collections. This tool bridges the gap between Payload CMS collections and web app development by automatically generating TypeScript types, API client methods, React components, and route files.
@@ -18,11 +18,11 @@ Automated code generation from Payload CMS collections. This tool bridges the ga
 ## Installation
 
 ```bash
-npm install @overland/collection-registry
+npm install @alloylab/collection-registry
 # or
-yarn add @overland/collection-registry
+yarn add @alloylab/collection-registry
 # or
-pnpm add @overland/collection-registry
+pnpm add @alloylab/collection-registry
 ```
 
 ## Quick Start
@@ -43,7 +43,7 @@ npx collection-registry \
 ### 2. Programmatic Usage
 
 ```javascript
-import { CollectionRegistry } from '@overland/collection-registry';
+import { CollectionRegistry } from '@alloylab/collection-registry';
 
 const registry = new CollectionRegistry({
   collectionsPath: './src/collections',
@@ -251,7 +251,7 @@ export async function load() {
 You can extend the tool with custom templates:
 
 ```javascript
-import { CollectionRegistry } from '@overland/collection-registry';
+import { CollectionRegistry } from '@alloylab/collection-registry';
 
 class CustomRegistry extends CollectionRegistry {
   generateCustomFiles() {
@@ -265,7 +265,7 @@ class CustomRegistry extends CollectionRegistry {
 Customize TypeScript type mapping:
 
 ```javascript
-import { getTypeScriptType } from '@overland/collection-registry';
+import { getTypeScriptType } from '@alloylab/collection-registry';
 
 // Extend the type mapping
 const customTypeMap = {
@@ -311,12 +311,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://github.com/overland-stack/collection-registry#readme)
-- 🐛 [Issue Tracker](https://github.com/overland-stack/collection-registry/issues)
-- 💬 [Discussions](https://github.com/overland-stack/collection-registry/discussions)
+- 📖 [Documentation](https://github.com/alloy-lab/collection-registry#readme)
+- 🐛 [Issue Tracker](https://github.com/alloy-lab/collection-registry/issues)
+- 💬 [Discussions](https://github.com/alloy-lab/collection-registry/discussions)
 
 ## Related Projects
 
-- [Overland Stack](https://github.com/overland-stack/overland) - Full-stack template
+- [Overland Stack](https://github.com/alloy-lab/overland) - Full-stack template
 - [Payload CMS](https://payloadcms.com/) - Headless CMS
 - [React Router](https://reactrouter.com/) - Web framework
