@@ -108,8 +108,15 @@ jobs:
             echo "no-bump=true" >> $GITHUB_OUTPUT
             echo "No version bump needed - already tagged"
           else
-            echo "no-bump=false" >> $GITHUB_OUTPUT
-            echo "Version bump needed"
+            # Check if the current version already exists on npm
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
+            if npm view @alloylab/collection-registry@$CURRENT_VERSION version >/dev/null 2>&1; then
+              echo "no-bump=true" >> $GITHUB_OUTPUT
+              echo "Version $CURRENT_VERSION already exists on npm - skipping publish"
+            else
+              echo "no-bump=false" >> $GITHUB_OUTPUT
+              echo "Version bump needed"
+            fi
           fi
 
       - name: Auto-increment version
@@ -143,8 +150,21 @@ jobs:
           git push origin main
           git push origin "v$NEW_VERSION"
 
-      - name: Publish to npm
+      - name: Check if version exists on npm
         if: steps.version-check.outputs.no-bump == 'false'
+        id: version-exists
+        run: |
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          if npm view @alloylab/collection-registry@$NEW_VERSION version >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version $NEW_VERSION already exists on npm"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Version $NEW_VERSION is new and can be published"
+          fi
+
+      - name: Publish to npm
+        if: steps.version-check.outputs.no-bump == 'false' && steps.version-exists.outputs.exists == 'false'
         run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
