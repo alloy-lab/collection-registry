@@ -1,0 +1,128 @@
+name: ✨ Feature Request
+description: Suggest an idea for the Collection Registry
+title: '[Feature]: '
+labels: ['enhancement', 'needs-triage']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please fill out the form below to help us understand your request.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: A clear and concise description of the feature you'd like to see
+      placeholder: Describe the feature in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: |
+        - What problem does this solve?
+        - Who would benefit from this feature?
+        - How often would this be used?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How should this feature work? Describe your ideal implementation
+      placeholder: |
+        - How should the feature behave?
+        - What should the API look like?
+        - Any specific requirements or constraints?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other solutions have you considered?
+      placeholder: |
+        - Have you tried any workarounds?
+        - Are there existing tools that solve this?
+        - What are the limitations of current approaches?
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - 'Type Generation Enhancement'
+        - 'API Client Enhancement'
+        - 'Route Generation Enhancement'
+        - 'CLI Enhancement'
+        - 'Configuration Enhancement'
+        - 'Performance Improvement'
+        - 'Developer Experience'
+        - 'Documentation'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - 'Low - Nice to have'
+        - 'Medium - Would be helpful'
+        - 'High - Important for my use case'
+        - 'Critical - Blocking my workflow'
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups or Examples
+      description: If applicable, provide mockups, diagrams, or code examples
+      placeholder: |
+        ```typescript
+        // Example of how the feature might work
+        const registry = new CollectionRegistry({
+          // New configuration options
+        });
+        ```
+      render: typescript
+
+  - type: textarea
+    id: breaking-changes
+    attributes:
+      label: Breaking Changes
+      description: Would this feature require breaking changes?
+      placeholder: |
+        - Would this change existing APIs?
+        - Would this affect existing generated code?
+        - How could we maintain backward compatibility?
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context, research, or references
+      placeholder: |
+        - Links to related issues or discussions
+        - Research on similar features in other tools
+        - Any other relevant information
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this feature request, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

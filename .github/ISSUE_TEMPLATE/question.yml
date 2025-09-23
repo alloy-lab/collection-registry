@@ -1,0 +1,105 @@
+name: ❓ Question
+description: Ask a question about the Collection Registry
+title: '[Question]: '
+labels: ['question', 'needs-triage']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about the Collection Registry? We're here to help! Please provide as much detail as possible.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+      placeholder: Ask your question here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide context about your use case or what you're trying to achieve
+      placeholder: |
+        - What are you trying to accomplish?
+        - What have you tried so far?
+        - What's your current setup?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: Question Type
+      description: What type of question is this?
+      options:
+        - 'How to use a feature'
+        - 'Configuration help'
+        - 'Troubleshooting'
+        - 'Best practices'
+        - 'Integration with other tools'
+        - 'Performance optimization'
+        - 'Customization'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: input
+    id: collection-registry-version
+    attributes:
+      label: Collection Registry Version
+      description: What version of @alloylab/collection-registry are you using?
+      placeholder: 1.1.0
+    validations:
+      required: false
+
+  - type: input
+    id: payload-version
+    attributes:
+      label: Payload CMS Version
+      description: What version of Payload CMS are you using?
+      placeholder: 3.0.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: Code Example
+      description: If applicable, provide relevant code or configuration
+      placeholder: |
+        ```typescript
+        // Your code or configuration here
+        ```
+      render: typescript
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: If you're encountering errors, paste them here
+      placeholder: Paste any error messages or logs here...
+      render: shell
+
+  - type: textarea
+    id: research
+    attributes:
+      label: Research Done
+      description: What have you already tried or researched?
+      placeholder: |
+        - Documentation I've checked
+        - Solutions I've tried
+        - Related issues I've found
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this question, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

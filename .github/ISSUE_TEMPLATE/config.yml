@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/alloy-lab/collection-registry/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/alloy-lab/collection-registry#readme
+    about: Check our documentation and examples
+  - name: 🔍 Search Issues
+    url: https://github.com/alloy-lab/collection-registry/issues
+    about: Search existing issues before creating a new one

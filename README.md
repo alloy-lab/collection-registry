@@ -325,6 +325,13 @@ See [VERSIONING.md](./VERSIONING.md) for detailed information.
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
 
+- 📖 [Contributing Guide](CONTRIBUTING.md)
+- 🛡️ [Security Policy](SECURITY.md)
+- 🤝 [Code of Conduct](CODE_OF_CONDUCT.md)
+- 🐛 [Bug Reports](.github/ISSUE_TEMPLATE/bug_report.yml)
+- ✨ [Feature Requests](.github/ISSUE_TEMPLATE/feature_request.yml)
+- ❓ [Questions](.github/ISSUE_TEMPLATE/question.yml)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

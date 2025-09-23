@@ -1,0 +1,173 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in the Collection Registry
+title: '[Bug]: '
+labels: ['bug', 'needs-triage']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill out the form below to help us understand and reproduce the issue.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe the bug in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Run command '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: Describe what should have happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages
+      description: Any error messages or stack traces
+      placeholder: Paste any error messages here...
+      render: shell
+
+  - type: input
+    id: collections-path
+    attributes:
+      label: Collections Path
+      description: Path to your Payload collections directory
+      placeholder: ./src/collections
+    validations:
+      required: false
+
+  - type: input
+    id: output-path
+    attributes:
+      label: Output Path
+      description: Path where generated files should be created
+      placeholder: ./generated
+    validations:
+      required: false
+
+  - type: input
+    id: types-path
+    attributes:
+      label: Types Path
+      description: Path to your Payload types file
+      placeholder: ./payload-types.ts
+    validations:
+      required: false
+
+  - type: dropdown
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you using?
+      options:
+        - '18.x'
+        - '20.x'
+        - '22.x'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: package-manager
+    attributes:
+      label: Package Manager
+      description: What package manager are you using?
+      options:
+        - 'npm'
+        - 'yarn'
+        - 'pnpm'
+    validations:
+      required: true
+
+  - type: input
+    id: collection-registry-version
+    attributes:
+      label: Collection Registry Version
+      description: What version of @alloylab/collection-registry are you using?
+      placeholder: 1.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: payload-version
+    attributes:
+      label: Payload CMS Version
+      description: What version of Payload CMS are you using?
+      placeholder: 3.0.0
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - 'macOS'
+        - 'Windows'
+        - 'Linux'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: collection-example
+    attributes:
+      label: Collection Example
+      description: If applicable, provide a minimal example of the collection causing the issue
+      placeholder: |
+        ```typescript
+        export const MyCollection: CollectionConfig = {
+          slug: 'my-collection',
+          fields: [
+            // Your collection fields here
+          ],
+        };
+        ```
+      render: typescript
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem
+      placeholder: Add any other context about the problem here...
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
