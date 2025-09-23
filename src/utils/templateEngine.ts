@@ -112,7 +112,9 @@ export interface FormSchema {
 /**
  * Generate base client template
  */
-export function generateBaseClientTemplate(baseUrl: string = 'env.CMS_API_URL'): string {
+export function generateBaseClientTemplate(
+  baseUrl: string = 'env.CMS_API_URL'
+): string {
   return `/**
  * Base Payload client class
  * Generated from Payload CMS collections
@@ -164,8 +166,11 @@ export abstract class BasePayloadClient {
 /**
  * Generate collection client methods
  */
-export function generateCollectionClientMethods(collection: CollectionMetadata): string {
-  const { slug, displayName, pluralName, hasSlug, hasStatus, hasNavigation } = collection;
+export function generateCollectionClientMethods(
+  collection: CollectionMetadata
+): string {
+  const { slug, displayName, pluralName, hasSlug, hasStatus, hasNavigation } =
+    collection;
 
   const methods = [];
 
@@ -240,7 +245,10 @@ export function generateCollectionClientMethods(collection: CollectionMetadata):
 /**
  * Generate React Router route template
  */
-export function generateRouteTemplate(collection: CollectionMetadata, type: 'index' | 'detail'): string {
+export function generateRouteTemplate(
+  collection: CollectionMetadata,
+  type: 'index' | 'detail'
+): string {
   const { slug, displayName, pluralName } = collection;
 
   if (type === 'index') {

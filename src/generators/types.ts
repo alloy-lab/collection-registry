@@ -64,7 +64,7 @@ export function generateAllCollectionInterfaces(
     .join('\n\n');
 
   const baseTypes = options.includeBaseTypes ? generateBaseTypes() : '';
-  
+
   const header = `/**
  * Generated TypeScript types from Payload CMS collections
  * 
@@ -169,7 +169,10 @@ ${collections.map(c => `export type { ${c.displayName} } from './${c.slug}';`).j
 /**
  * Map Payload field types to TypeScript types
  */
-function mapFieldTypeToTypeScript(payloadType: string, fieldName: string = ''): string {
+function mapFieldTypeToTypeScript(
+  payloadType: string,
+  fieldName: string = ''
+): string {
   const typeMap: Record<string, string> = {
     text: 'string',
     textarea: 'string',
@@ -212,25 +215,27 @@ function mapFieldTypeToTypeScript(payloadType: string, fieldName: string = ''): 
 /**
  * Generate validation schema types (for use with form libraries)
  */
-export function generateValidationTypes(collection: CollectionMetadata): string {
+export function generateValidationTypes(
+  collection: CollectionMetadata
+): string {
   const { displayName, fields } = collection;
-  
+
   const validationFields = fields
     .map(field => {
       const rules = [];
-      
+
       if (field.required) {
         rules.push('required: true');
       }
-      
+
       if (field.type === 'email') {
         rules.push('email: true');
       }
-      
+
       if (field.type === 'number') {
         rules.push('type: "number"');
       }
-      
+
       return `  ${field.name}: { ${rules.join(', ')} }`;
     })
     .join(',\n');

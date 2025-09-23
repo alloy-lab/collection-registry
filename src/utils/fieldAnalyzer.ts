@@ -65,7 +65,10 @@ export function analyzeFields(content: string): FieldMetadata[] {
 /**
  * Extract collection metadata from file content
  */
-export function extractCollectionMetadata(content: string, filename: string): CollectionMetadata | null {
+export function extractCollectionMetadata(
+  content: string,
+  filename: string
+): CollectionMetadata | null {
   try {
     // Extract slug
     const slugMatch = content.match(/slug:\s*['"`]([^'"`]+)['"`]/);
@@ -76,9 +79,10 @@ export function extractCollectionMetadata(content: string, filename: string): Co
 
     // Extract display name from useAsTitle or default to slug
     const titleMatch = content.match(/useAsTitle:\s*['"`]([^'"`]+)['"`]/);
-    let displayName = titleMatch && titleMatch[1]
-      ? capitalize(titleMatch[1])
-      : capitalize(slug);
+    let displayName =
+      titleMatch && titleMatch[1]
+        ? capitalize(titleMatch[1])
+        : capitalize(slug);
 
     // Special case: if useAsTitle is 'title', use the collection slug as display name
     if (titleMatch && titleMatch[1] === 'title') {
@@ -105,7 +109,10 @@ export function extractCollectionMetadata(content: string, filename: string): Co
       isPublic: content.includes('read: () => true'),
     };
   } catch (error) {
-    console.error(`Error parsing ${filename}:`, error instanceof Error ? error.message : 'Unknown error');
+    console.error(
+      `Error parsing ${filename}:`,
+      error instanceof Error ? error.message : 'Unknown error'
+    );
     return null;
   }
 }
@@ -113,7 +120,10 @@ export function extractCollectionMetadata(content: string, filename: string): Co
 /**
  * Map Payload field types to TypeScript types
  */
-export function getTypeScriptType(payloadType: string, fieldName: string = ''): string {
+export function getTypeScriptType(
+  payloadType: string,
+  fieldName: string = ''
+): string {
   const typeMap: Record<string, string> = {
     text: 'string',
     textarea: 'string',

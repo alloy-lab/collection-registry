@@ -49,7 +49,7 @@ const registry = new CollectionRegistry({
   collectionsPath: './src/collections',
   outputPath: './generated',
   typesPath: './payload-types.ts',
-  format: true
+  format: true,
 });
 
 await registry.generate();
@@ -59,23 +59,23 @@ await registry.generate();
 
 ### Command Line Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `--collections-path` | Path to Payload collections directory | `./src/collections` |
-| `--output-path` | Path to output generated files | `./generated` |
-| `--types-path` | Path to Payload generated types | `./payload-types.ts` |
-| `--format` | Format generated files with Prettier | `false` |
-| `--help` | Show help message | - |
+| Option               | Description                           | Default              |
+| -------------------- | ------------------------------------- | -------------------- |
+| `--collections-path` | Path to Payload collections directory | `./src/collections`  |
+| `--output-path`      | Path to output generated files        | `./generated`        |
+| `--types-path`       | Path to Payload generated types       | `./payload-types.ts` |
+| `--format`           | Format generated files with Prettier  | `false`              |
+| `--help`             | Show help message                     | -                    |
 
 ### Programmatic Configuration
 
 ```javascript
 const config = {
-  collectionsPath: './cms/src/collections',  // Required
-  outputPath: './web/app/lib',              // Required
-  typesPath: './cms/src/payload-types.ts',  // Required
-  format: true,                             // Optional
-  baseUrl: 'process.env.CMS_API_URL'        // Optional
+  collectionsPath: './cms/src/collections', // Required
+  outputPath: './web/app/lib', // Required
+  typesPath: './cms/src/payload-types.ts', // Required
+  format: true, // Optional
+  baseUrl: 'process.env.CMS_API_URL', // Optional
 };
 ```
 
@@ -84,17 +84,20 @@ const config = {
 The tool generates the following files in your output directory:
 
 ### Types (`types/`)
+
 - `base.ts` - Base types and interfaces
 - `{collection}.ts` - Individual collection types
 - `index.ts` - Exports all types
 
 ### API Clients (`clients/`)
+
 - `base.ts` - Base client class
 - `{collection}.ts` - Individual collection clients
 - `index.ts` - Exports all clients
 - `payloadClient.ts` - Main client aggregator
 
 ### Routes (optional)
+
 - `{collection}._index.tsx` - Collection index route
 - `{collection}.$slug.tsx` - Collection detail route
 
@@ -173,13 +176,14 @@ export const Posts: CollectionConfig = {
 ## Generated Output
 
 ### Types
+
 ```typescript
 // types/posts.ts
 export interface Post {
   id: string;
   title: string;
   slug: string;
-  status: "draft" | "published";
+  status: 'draft' | 'published';
   excerpt?: string;
   featuredImage?: Media;
   seo?: {
@@ -192,6 +196,7 @@ export interface Post {
 ```
 
 ### API Client
+
 ```typescript
 // clients/posts.ts
 export class PostsClient extends BasePayloadClient {
@@ -203,7 +208,9 @@ export class PostsClient extends BasePayloadClient {
     // Implementation
   }
 
-  async getPublishedPosts(options?: Omit<QueryOptions, 'where'>): Promise<Post[]> {
+  async getPublishedPosts(
+    options?: Omit<QueryOptions, 'where'>
+  ): Promise<Post[]> {
     // Implementation
   }
 }
@@ -212,6 +219,7 @@ export class PostsClient extends BasePayloadClient {
 ## Integration Examples
 
 ### React Router v7
+
 ```typescript
 // app/routes/posts._index.tsx
 import { postsClient } from '~/lib/clients';
@@ -223,6 +231,7 @@ export async function loader() {
 ```
 
 ### Next.js
+
 ```typescript
 // pages/posts/index.tsx
 import { postsClient } from '../lib/clients';
@@ -234,6 +243,7 @@ export async function getStaticProps() {
 ```
 
 ### SvelteKit
+
 ```typescript
 // src/routes/posts/+page.server.ts
 import { postsClient } from '$lib/clients';

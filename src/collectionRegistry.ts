@@ -19,13 +19,13 @@ import {
   extractCollectionMetadata,
   deduplicateFields,
   getTypeScriptType,
-  singularize
+  singularize,
 } from './utils/fieldAnalyzer.js';
 import {
   generateBaseClientTemplate,
   generateBaseTypesTemplate,
   generateCollectionClientMethods,
-  generateRouteTemplate
+  generateRouteTemplate,
 } from './utils/templateEngine.js';
 
 export interface CollectionRegistryConfig {
@@ -54,7 +54,7 @@ class CollectionRegistry {
       format: config.format || false,
       baseUrl: config.baseUrl || 'process.env.CMS_API_URL',
       skipExamples: config.skipExamples !== false, // Default to true
-      ...config
+      ...config,
     };
   }
 
@@ -65,7 +65,9 @@ class CollectionRegistry {
     console.log('🔍 Scanning Payload collections...');
 
     if (!fs.existsSync(this.config.collectionsPath)) {
-      console.log(`❌ Collections directory not found: ${this.config.collectionsPath}`);
+      console.log(
+        `❌ Collections directory not found: ${this.config.collectionsPath}`
+      );
       return;
     }
 
@@ -94,7 +96,6 @@ class CollectionRegistry {
       }
     });
   }
-
 
   /**
    * Load Payload generated types
@@ -139,11 +140,7 @@ class CollectionRegistry {
   private generateBaseTypes(): void {
     const baseTypesContent = generateBaseTypesTemplate();
 
-    const baseTypesPath = path.join(
-      this.config.outputPath,
-      'types',
-      'base.ts'
-    );
+    const baseTypesPath = path.join(this.config.outputPath, 'types', 'base.ts');
     fs.mkdirSync(path.dirname(baseTypesPath), { recursive: true });
     fs.writeFileSync(baseTypesPath, baseTypesContent);
   }
@@ -157,7 +154,7 @@ class CollectionRegistry {
     // Clean up field definitions to avoid duplicates and type errors
     const uniqueFields = deduplicateFields(fields);
     const fieldDefinitions = uniqueFields
-      .map((field: any) => {
+      .map((field: { name: string; required: boolean; type: string }) => {
         const optional = field.required ? '' : '?';
         const type = getTypeScriptType(field.type, field.name);
         return `  ${field.name}${optional}: ${type};`;
@@ -227,8 +224,6 @@ export type ${displayName}Update = Partial<${displayName}Input>;
    * Generate types index file
    */
   private generateTypesIndex(): void {
-    const collections = Array.from(this.collections.values());
-
     const indexContent = `/**
  * Types index - exports all collection types
  * Generated from Payload CMS collections
@@ -255,7 +250,6 @@ export type { Email } from './types/users';
     const typesIndexPath = path.join(this.config.outputPath, 'types.ts');
     fs.writeFileSync(typesIndexPath, indexContent);
   }
-
 
   /**
    * Generate API client methods
@@ -401,7 +395,7 @@ export type SiteSettingsUpdate = Partial<SiteSettingsInput>;
    * Generate client for a specific collection
    */
   private generateCollectionClient(collection: CollectionMetadata): void {
-    const { slug, displayName, hasSlug, hasStatus, hasNavigation } = collection;
+    const { slug, displayName } = collection;
     const clientPath = path.join(
       this.config.outputPath,
       'clients',
@@ -495,7 +489,6 @@ export const ${slug}Client = new ${displayName}Client();
     });
   }
 
-
   /**
    * Generate client index file
    */
@@ -540,10 +533,6 @@ export type { PayloadResponse, QueryOptions } from '../types';
    */
   private generateMainClient(): void {
     const collections = Array.from(this.collections.values());
-
-    const clientExports = collections
-      .map(collection => `  ${collection.slug}Client,`)
-      .join('\n');
 
     const legacyMethods = collections
       .map(collection => {
@@ -620,10 +609,12 @@ export type {
 } from './types';
 `;
 
-    const mainClientPath = path.join(this.config.outputPath, 'payloadClient.ts');
+    const mainClientPath = path.join(
+      this.config.outputPath,
+      'payloadClient.ts'
+    );
     fs.writeFileSync(mainClientPath, mainClientContent);
   }
-
 
   /**
    * Generate route files
@@ -637,20 +628,25 @@ export type {
       if (!collection.hasSlug) return;
 
       // Generate index route
-      const indexRoutePath = path.join(routesPath, `${collection.slug}._index.tsx`);
+      const indexRoutePath = path.join(
+        routesPath,
+        `${collection.slug}._index.tsx`
+      );
       const indexRouteContent = generateRouteTemplate(collection, 'index');
       fs.mkdirSync(path.dirname(indexRoutePath), { recursive: true });
       fs.writeFileSync(indexRoutePath, indexRouteContent);
 
       // Generate detail route
-      const detailRoutePath = path.join(routesPath, `${collection.slug}.$slug.tsx`);
+      const detailRoutePath = path.join(
+        routesPath,
+        `${collection.slug}.$slug.tsx`
+      );
       const detailRouteContent = generateRouteTemplate(collection, 'detail');
       fs.writeFileSync(detailRoutePath, detailRouteContent);
     });
 
     console.log('✅ Generated route files');
   }
-
 
   /**
    * Generate a summary report
@@ -673,7 +669,6 @@ export type {
 
     console.log(`\n✅ Generated ${this.collections.size} collection(s)`);
   }
-
 
   /**
    * Format generated files with prettier
@@ -728,9 +723,9 @@ export type {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const registry = new CollectionRegistry();
-    registry.generate().catch((error: unknown) => {
-      console.error(error instanceof Error ? error.message : 'Unknown error');
-    });
+  registry.generate().catch((error: unknown) => {
+    console.error(error instanceof Error ? error.message : 'Unknown error');
+  });
 }
 
 export default CollectionRegistry;

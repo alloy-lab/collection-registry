@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import CollectionRegistry from '../collectionRegistry.js';
-import { extractCollectionMetadata, analyzeFields } from '../utils/fieldAnalyzer.js';
-import type { CollectionRegistryConfig } from '../collectionRegistry.js';
+import {
+  extractCollectionMetadata,
+  analyzeFields,
+} from '../utils/fieldAnalyzer.js';
 
 describe('CollectionRegistry', () => {
   let registry: CollectionRegistry;
