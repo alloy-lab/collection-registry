@@ -1,0 +1,63 @@
+{
+  "name": "@overland/collection-registry",
+  "version": "1.0.0",
+  "description": "Automated code generation from Payload CMS collections",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "collection-registry": "./bin/collection-registry.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src --ext .js,.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "npm run build",
+    "publish": "npm publish --access public"
+  },
+  "keywords": [
+    "payload",
+    "cms",
+    "code-generation",
+    "typescript",
+    "react",
+    "api-client",
+    "collections"
+  ],
+  "author": "Stephen Way <stephen@stephenway.net>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/overland-stack/collection-registry.git"
+  },
+  "bugs": {
+    "url": "https://github.com/overland-stack/collection-registry/issues"
+  },
+  "homepage": "https://github.com/overland-stack/collection-registry#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "prettier": "^3.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "eslint": "^9.16.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "payload": "^3.0.0"
+  }
+}
