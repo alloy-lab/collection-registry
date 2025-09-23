@@ -14,17 +14,35 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import type { CollectionMetadata } from './utils/fieldAnalyzer.js';
 import {
-  extractCollectionMetadata
+  extractCollectionMetadata,
+  deduplicateFields,
+  getTypeScriptType,
+  singularize
 } from './utils/fieldAnalyzer.js';
 import {
   generateBaseClientTemplate,
   generateBaseTypesTemplate,
-  generateCollectionClientMethods
+  generateCollectionClientMethods,
+  generateRouteTemplate
 } from './utils/templateEngine.js';
 
+export interface CollectionRegistryConfig {
+  collectionsPath?: string;
+  outputPath?: string;
+  typesPath?: string;
+  format?: boolean;
+  baseUrl?: string;
+  skipExamples?: boolean;
+}
+
 class CollectionRegistry {
-  constructor(config = {}) {
+  private collections: Map<string, CollectionMetadata>;
+  private payloadTypes: string;
+  private config: Required<CollectionRegistryConfig>;
+
+  constructor(config: CollectionRegistryConfig = {}) {
     this.collections = new Map();
     this.payloadTypes = '';
 
@@ -43,7 +61,7 @@ class CollectionRegistry {
   /**
    * Scan CMS collections directory and extract collection metadata
    */
-  scanCollections() {
+  scanCollections(): void {
     console.log('🔍 Scanning Payload collections...');
 
     if (!fs.existsSync(this.config.collectionsPath)) {
@@ -81,7 +99,7 @@ class CollectionRegistry {
   /**
    * Load Payload generated types
    */
-  loadPayloadTypes() {
+  loadPayloadTypes(): void {
     if (fs.existsSync(this.config.typesPath)) {
       this.payloadTypes = fs.readFileSync(this.config.typesPath, 'utf8');
       console.log('📄 Loaded Payload types');
@@ -95,7 +113,7 @@ class CollectionRegistry {
   /**
    * Generate web app types
    */
-  generateWebTypes() {
+  generateWebTypes(): void {
     console.log('🔧 Generating web app types...');
 
     // Generate base types file
@@ -118,7 +136,7 @@ class CollectionRegistry {
   /**
    * Generate base types file
    */
-  generateBaseTypes() {
+  private generateBaseTypes(): void {
     const baseTypesContent = generateBaseTypesTemplate();
 
     const baseTypesPath = path.join(
@@ -133,15 +151,15 @@ class CollectionRegistry {
   /**
    * Generate individual collection type file
    */
-  generateCollectionTypeFile(collection) {
+  private generateCollectionTypeFile(collection: CollectionMetadata): void {
     const { slug, displayName, fields } = collection;
 
     // Clean up field definitions to avoid duplicates and type errors
-    const uniqueFields = this.deduplicateFields(fields);
+    const uniqueFields = deduplicateFields(fields);
     const fieldDefinitions = uniqueFields
-      .map(field => {
+      .map((field: any) => {
         const optional = field.required ? '' : '?';
-        const type = this.getTypeScriptType(field.type, field.name);
+        const type = getTypeScriptType(field.type, field.name);
         return `  ${field.name}${optional}: ${type};`;
       })
       .join('\n');
@@ -167,7 +185,7 @@ export type MediaInput = Omit<Media, 'id' | 'createdAt' | 'updatedAt'>;
 export type MediaUpdate = Partial<MediaInput>;
 `;
       const collectionTypePath = path.join(
-        path.dirname(WEB_TYPES_PATH),
+        this.config.outputPath,
         'types',
         `${slug}.ts`
       );
@@ -208,7 +226,7 @@ export type ${displayName}Update = Partial<${displayName}Input>;
   /**
    * Generate types index file
    */
-  generateTypesIndex() {
+  private generateTypesIndex(): void {
     const collections = Array.from(this.collections.values());
 
     const indexContent = `/**
@@ -242,7 +260,7 @@ export type { Email } from './types/users';
   /**
    * Generate API client methods
    */
-  generateClientMethods() {
+  generateClientMethods(): void {
     console.log('🔧 Generating API client methods...');
 
     // Generate individual client files
@@ -257,7 +275,7 @@ export type { Email } from './types/users';
   /**
    * Generate base client class
    */
-  generateBaseClient() {
+  private generateBaseClient(): void {
     const baseClientPath = path.join(
       this.config.outputPath,
       'clients',
@@ -272,7 +290,7 @@ export type { Email } from './types/users';
   /**
    * Generate individual collection client files
    */
-  generateCollectionClients() {
+  private generateCollectionClients(): void {
     Array.from(this.collections.values()).forEach(collection => {
       this.generateCollectionClient(collection);
     });
@@ -287,9 +305,9 @@ export type { Email } from './types/users';
   /**
    * Generate site-settings client
    */
-  generateSiteSettingsClient() {
+  private generateSiteSettingsClient(): void {
     const clientPath = path.join(
-      path.dirname(WEB_CLIENT_PATH),
+      this.config.outputPath,
       'clients',
       'site-settings.ts'
     );
@@ -325,9 +343,9 @@ export const siteSettingsClient = new SiteSettingsClient();
   /**
    * Generate site-settings type file
    */
-  generateSiteSettingsTypeFile() {
+  private generateSiteSettingsTypeFile(): void {
     const typePath = path.join(
-      path.dirname(WEB_TYPES_PATH),
+      this.config.outputPath,
       'types',
       'site-settings.ts'
     );
@@ -382,7 +400,7 @@ export type SiteSettingsUpdate = Partial<SiteSettingsInput>;
   /**
    * Generate client for a specific collection
    */
-  generateCollectionClient(collection) {
+  private generateCollectionClient(collection: CollectionMetadata): void {
     const { slug, displayName, hasSlug, hasStatus, hasNavigation } = collection;
     const clientPath = path.join(
       this.config.outputPath,
@@ -415,7 +433,7 @@ export const ${slug}Client = new ${displayName}Client();
   /**
    * Clean up old client files that are no longer needed
    */
-  cleanupOldClientFiles() {
+  private cleanupOldClientFiles(): void {
     const clientsDir = path.join(this.config.outputPath, 'clients');
 
     if (!fs.existsSync(clientsDir)) {
@@ -449,7 +467,7 @@ export const ${slug}Client = new ${displayName}Client();
   /**
    * Clean up old type files that are no longer needed
    */
-  cleanupOldTypeFiles() {
+  private cleanupOldTypeFiles(): void {
     const typesDir = path.join(this.config.outputPath, 'types');
 
     if (!fs.existsSync(typesDir)) {
@@ -481,7 +499,7 @@ export const ${slug}Client = new ${displayName}Client();
   /**
    * Generate client index file
    */
-  generateClientIndex() {
+  private generateClientIndex(): void {
     const collections = Array.from(this.collections.values());
     const clientIndexPath = path.join(
       this.config.outputPath,
@@ -520,7 +538,7 @@ export type { PayloadResponse, QueryOptions } from '../types';
   /**
    * Generate main client file
    */
-  generateMainClient() {
+  private generateMainClient(): void {
     const collections = Array.from(this.collections.values());
 
     const clientExports = collections
@@ -546,7 +564,7 @@ export type { PayloadResponse, QueryOptions } from '../types';
 
         if (hasSlug) {
           methods.push(
-            `  get${this.singularize(displayName)}: ${slug}Client.get${this.singularize(displayName)}.bind(${slug}Client),`
+            `  get${singularize(displayName)}: ${slug}Client.get${singularize(displayName)}.bind(${slug}Client),`
           );
         }
 
@@ -610,7 +628,7 @@ export type {
   /**
    * Generate route files
    */
-  generateRouteFiles() {
+  generateRouteFiles(): void {
     console.log('🔧 Generating route files...');
 
     const routesPath = path.join(this.config.outputPath, 'routes');
@@ -637,7 +655,7 @@ export type {
   /**
    * Generate a summary report
    */
-  generateReport() {
+  generateReport(): void {
     console.log('\n📊 Collection Registry Report');
     console.log('================================');
 
@@ -660,7 +678,7 @@ export type {
   /**
    * Format generated files with prettier
    */
-  formatGeneratedFiles() {
+  private formatGeneratedFiles(): void {
     if (!this.config.format) {
       return;
     }
@@ -680,7 +698,7 @@ export type {
     } catch (error) {
       console.warn(
         '⚠️  Warning: Could not format generated files:',
-        error.message
+        error instanceof Error ? error.message : 'Unknown error'
       );
     }
   }
@@ -688,7 +706,7 @@ export type {
   /**
    * Main generation process
    */
-  async generate() {
+  async generate(): Promise<void> {
     console.log('🚀 Starting Collection Registry generation...\n');
     console.log(`📁 Collections path: ${this.config.collectionsPath}`);
     console.log(`📁 Output path: ${this.config.outputPath}`);
@@ -710,7 +728,9 @@ export type {
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const registry = new CollectionRegistry();
-  registry.generate().catch(console.error);
+    registry.generate().catch((error: unknown) => {
+      console.error(error instanceof Error ? error.message : 'Unknown error');
+    });
 }
 
 export default CollectionRegistry;

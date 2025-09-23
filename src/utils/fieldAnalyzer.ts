@@ -5,13 +5,35 @@
  * to generate appropriate TypeScript types and API client methods.
  */
 
+// Type definitions
+export interface FieldMetadata {
+  name: string;
+  type: string;
+  required: boolean;
+}
+
+export interface CollectionMetadata {
+  slug: string;
+  displayName: string;
+  pluralName: string;
+  filename: string;
+  fields: FieldMetadata[];
+  hasSlug: boolean;
+  hasStatus: boolean;
+  hasSEO: boolean;
+  hasNavigation: boolean;
+  hasFeaturedImage: boolean;
+  hasExcerpt: boolean;
+  hasTags: boolean;
+  hasAuthor: boolean;
+  isPublic: boolean;
+}
+
 /**
  * Analyze collection fields from file content
- * @param {string} content - The collection file content
- * @returns {Array} Array of field objects with metadata
  */
-export function analyzeFields(content) {
-  const fields = [];
+export function analyzeFields(content: string): FieldMetadata[] {
+  const fields: FieldMetadata[] = [];
 
   // Simple field extraction (could be more sophisticated)
   const fieldMatches = content.matchAll(/name:\s*['"`]([^'"`]+)['"`]/g);
@@ -20,11 +42,13 @@ export function analyzeFields(content) {
     const fieldName = match[1];
     const fieldStart = match.index;
 
+    if (!fieldName || fieldStart === undefined) continue;
+
     // Find the field type
     const typeMatch = content
       .substring(fieldStart)
       .match(/type:\s*['"`]([^'"`]+)['"`]/);
-    const fieldType = typeMatch ? typeMatch[1] : 'text';
+    const fieldType = typeMatch && typeMatch[1] ? typeMatch[1] : 'text';
 
     fields.push({
       name: fieldName,
@@ -40,21 +64,19 @@ export function analyzeFields(content) {
 
 /**
  * Extract collection metadata from file content
- * @param {string} content - The collection file content
- * @param {string} filename - The collection filename
- * @returns {Object|null} Collection metadata or null if parsing fails
  */
-export function extractCollectionMetadata(content, filename) {
+export function extractCollectionMetadata(content: string, filename: string): CollectionMetadata | null {
   try {
     // Extract slug
     const slugMatch = content.match(/slug:\s*['"`]([^'"`]+)['"`]/);
     if (!slugMatch) return null;
 
     const slug = slugMatch[1];
+    if (!slug) return null;
 
     // Extract display name from useAsTitle or default to slug
     const titleMatch = content.match(/useAsTitle:\s*['"`]([^'"`]+)['"`]/);
-    let displayName = titleMatch
+    let displayName = titleMatch && titleMatch[1]
       ? capitalize(titleMatch[1])
       : capitalize(slug);
 
@@ -83,19 +105,16 @@ export function extractCollectionMetadata(content, filename) {
       isPublic: content.includes('read: () => true'),
     };
   } catch (error) {
-    console.error(`Error parsing ${filename}:`, error.message);
+    console.error(`Error parsing ${filename}:`, error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
 }
 
 /**
  * Map Payload field types to TypeScript types
- * @param {string} payloadType - The Payload field type
- * @param {string} fieldName - The field name for special handling
- * @returns {string} TypeScript type
  */
-export function getTypeScriptType(payloadType, fieldName = '') {
-  const typeMap = {
+export function getTypeScriptType(payloadType: string, fieldName: string = ''): string {
+  const typeMap: Record<string, string> = {
     text: 'string',
     textarea: 'string',
     richText: 'any',
@@ -126,10 +145,8 @@ export function getTypeScriptType(payloadType, fieldName = '') {
 
 /**
  * Deduplicate fields to avoid conflicts
- * @param {Array} fields - Array of field objects
- * @returns {Array} Deduplicated fields
  */
-export function deduplicateFields(fields) {
+export function deduplicateFields(fields: FieldMetadata[]): FieldMetadata[] {
   const seen = new Set();
   return fields.filter(field => {
     if (seen.has(field.name)) {
@@ -141,15 +158,16 @@ export function deduplicateFields(fields) {
 }
 
 // Utility functions
-export function capitalize(str) {
+export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function pluralize(str) {
+export function pluralize(str: string): string {
   // Handle special cases - words that are already plural or have irregular plurals
   if (str === 'Media') return 'Media';
   if (str === 'Pages') return 'Pages';
   if (str === 'Users') return 'Users';
+  if (str === 'Posts') return 'Posts'; // Already plural
   if (str === 'Examples') return 'Examples'; // Already plural
 
   // Standard pluralization
@@ -162,7 +180,7 @@ export function pluralize(str) {
   }
 }
 
-export function singularize(str) {
+export function singularize(str: string): string {
   // Handle special cases
   if (str === 'Media') return 'Media';
   if (str === 'Pages') return 'Page';

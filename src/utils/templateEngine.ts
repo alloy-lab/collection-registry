@@ -5,12 +5,12 @@
  * frameworks and use cases.
  */
 
+import type { CollectionMetadata } from './fieldAnalyzer.js';
+
 /**
  * Generate TypeScript interface for a collection
- * @param {Object} collection - Collection metadata
- * @returns {string} TypeScript interface
  */
-export function generateCollectionType(collection) {
+export function generateCollectionType(collection: CollectionMetadata): string {
   const { displayName, fields } = collection;
 
   const fieldDefinitions = fields
@@ -31,9 +31,8 @@ ${fieldDefinitions}
 
 /**
  * Generate base types template
- * @returns {string} Base types content
  */
-export function generateBaseTypesTemplate() {
+export function generateBaseTypesTemplate(): string {
   return `/**
  * Base types for web app
  * Generated from Payload CMS collections
@@ -112,10 +111,8 @@ export interface FormSchema {
 
 /**
  * Generate base client template
- * @param {string} baseUrl - The base URL for the API
- * @returns {string} Base client content
  */
-export function generateBaseClientTemplate(baseUrl = 'env.CMS_API_URL') {
+export function generateBaseClientTemplate(baseUrl: string = 'env.CMS_API_URL'): string {
   return `/**
  * Base Payload client class
  * Generated from Payload CMS collections
@@ -123,6 +120,7 @@ export function generateBaseClientTemplate(baseUrl = 'env.CMS_API_URL') {
  * DO NOT EDIT MANUALLY - Run collection-registry to regenerate
  */
 
+import { env } from '../env';
 import type { PayloadResponse, QueryOptions } from '../types';
 
 export abstract class BasePayloadClient {
@@ -165,10 +163,8 @@ export abstract class BasePayloadClient {
 
 /**
  * Generate collection client methods
- * @param {Object} collection - Collection metadata
- * @returns {string} Client methods
  */
-export function generateCollectionClientMethods(collection) {
+export function generateCollectionClientMethods(collection: CollectionMetadata): string {
   const { slug, displayName, pluralName, hasSlug, hasStatus, hasNavigation } = collection;
 
   const methods = [];
@@ -243,11 +239,8 @@ export function generateCollectionClientMethods(collection) {
 
 /**
  * Generate React Router route template
- * @param {Object} collection - Collection metadata
- * @param {string} type - Route type ('index' or 'detail')
- * @returns {string} Route content
  */
-export function generateRouteTemplate(collection, type) {
+export function generateRouteTemplate(collection: CollectionMetadata, type: 'index' | 'detail'): string {
   const { slug, displayName, pluralName } = collection;
 
   if (type === 'index') {
