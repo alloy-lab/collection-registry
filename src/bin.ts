@@ -17,7 +17,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { CollectionRegistry } from '../dist/index.js';
+import CollectionRegistry from './collectionRegistry.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,7 +47,7 @@ for (let i = 0; i < args.length; i++) {
       process.exit(0);
       break;
     default:
-      if (arg.startsWith('--')) {
+      if (arg && arg.startsWith('--')) {
         console.error(`Unknown option: ${arg}`);
         process.exit(1);
       }
@@ -115,7 +115,7 @@ async function run() {
     await registry.generate();
     console.log('\n🎉 Collection Registry generation complete!');
   } catch (error) {
-    console.error('❌ Error running collection registry:', error.message);
+    console.error('❌ Error running collection registry:', error instanceof Error ? error.message : 'Unknown error');
     process.exit(1);
   }
 }

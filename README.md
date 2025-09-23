@@ -31,10 +31,10 @@ pnpm add @alloylab/collection-registry
 
 ```bash
 # Run with default paths
-npx collection-registry
+npx collectionRegistry
 
 # Or specify custom paths
-npx collection-registry \
+npx collectionRegistry \
   --collections-path ./cms/src/collections \
   --output-path ./web/app/lib \
   --types-path ./cms/src/payload-types.ts
@@ -298,7 +298,7 @@ const customTypeMap = {
 Enable debug logging:
 
 ```bash
-DEBUG=collection-registry npx collection-registry
+DEBUG=collectionRegistry npx collectionRegistry
 ```
 
 ## Contributing
