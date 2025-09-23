@@ -1,0 +1,176 @@
+# Collection Registry - Cursor AI Rules
+
+You are working with the Collection Registry package, a TypeScript tool for automated code generation from Payload CMS collections.
+
+## Project Overview
+
+This package automatically generates:
+- TypeScript interfaces from Payload collection schemas
+- API client methods for each collection
+- React Router route files
+- Type-safe code for web applications
+
+## Commit Message Guidelines
+
+### CRITICAL: Use Conventional Commits Format
+
+ALL commit messages MUST follow this exact format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Required Commit Types
+
+- `feat(scope):` - New features (triggers MINOR version bump)
+- `fix(scope):` - Bug fixes (triggers PATCH version bump)
+- `docs(scope):` - Documentation changes (triggers PATCH version bump)
+- `style(scope):` - Code style changes (triggers PATCH version bump)
+- `refactor(scope):` - Code refactoring (triggers PATCH version bump)
+- `perf(scope):` - Performance improvements (triggers PATCH version bump)
+- `test(scope):` - Adding or updating tests (triggers PATCH version bump)
+- `chore(scope):` - Maintenance tasks (triggers PATCH version bump)
+- `ci(scope):` - CI/CD changes (triggers PATCH version bump)
+- `build(scope):` - Build system changes (triggers PATCH version bump)
+- `revert(scope):` - Reverting previous commits (triggers PATCH version bump)
+
+### Required Scopes
+
+- `core` - Core functionality
+- `cli` - CLI tool
+- `types` - Type generation
+- `routes` - Route generation
+- `api` - API client generation
+- `docs` - Documentation
+- `deps` - Dependencies
+- `config` - Configuration
+- `ci` - CI/CD
+- `release` - Release process
+
+### Breaking Changes
+
+For breaking changes, use:
+- `feat!(scope):` or `fix!(scope):` - Exclamation mark indicates breaking change
+- OR include `BREAKING CHANGE:` in the footer
+
+### Examples of GOOD Commit Messages
+
+```bash
+feat(types): add support for nested object types
+fix(cli): resolve path resolution issue in Windows
+docs(readme): update installation instructions
+chore(deps): update dependencies to latest versions
+feat!(api): change client method signatures
+
+BREAKING CHANGE: The getCollection method now returns a Promise
+```
+
+### Examples of BAD Commit Messages
+
+```bash
+# ❌ Too vague
+"update stuff"
+"fix bug"
+"add feature"
+
+# ❌ Wrong format
+"Added support for nested objects"
+"Fixed CLI path issue"
+"Updated documentation"
+
+# ❌ Missing scope
+"feat: add nested object support"
+"fix: resolve path issue"
+```
+
+## Development Guidelines
+
+### Code Quality
+
+- All code must be fully typed with TypeScript
+- Use ESLint and Prettier configurations
+- Follow the established code style
+- Use the Lefthook pre-commit hooks
+- Ensure all code passes type checking
+
+### Testing
+
+- Write unit tests with Vitest
+- Follow the existing test patterns
+- Maintain test coverage above 80%
+- Test both success and error cases
+
+### File Organization
+
+- Source code in `src/`
+- Tests in `src/__tests__/`
+- CLI entry point in `src/bin.ts`
+- Main logic in `src/collectionRegistry.ts`
+- Utilities in `src/utils/`
+
+### Package Structure
+
+- `dist/` - Compiled output (auto-generated)
+- `src/` - TypeScript source code
+- `templates/` - Code generation templates
+- `examples/` - Usage examples
+- `docs/` - Documentation
+
+## Commands Reference
+
+### Development
+- `pnpm dev` - Watch mode compilation
+- `pnpm build` - Build the package
+- `pnpm test` - Run tests
+- `pnpm test:watch` - Watch mode tests
+- `pnpm test:coverage` - Run tests with coverage
+
+### Code Quality
+- `pnpm lint` - Lint code
+- `pnpm lint:fix` - Fix linting issues
+- `pnpm format` - Format code with Prettier
+- `pnpm typecheck` - Run TypeScript type checking
+- `pnpm commitlint` - Validate commit messages
+
+### Git Hooks
+- `pnpm hooks:install` - Install lefthook hooks
+- `pnpm hooks:uninstall` - Uninstall lefthook hooks
+
+### Publishing
+- `pnpm publish` - Publish to npm
+- `pnpm version patch` - Bump patch version
+- `pnpm version minor` - Bump minor version
+- `pnpm version major` - Bump major version
+
+## Important Notes
+
+- **ALWAYS use conventional commits** - the CI/CD system depends on them
+- **Test locally** before pushing to main
+- **Breaking changes** should use `feat!` or include `BREAKING CHANGE:` in footer
+- **Version tags** are created automatically - don't create them manually
+- **npm publishing** happens automatically after successful tests
+
+## Version Bump Rules
+
+- `feat(scope):` → Minor version bump (1.0.0 → 1.1.0)
+- `fix(scope):` → Patch version bump (1.0.0 → 1.0.1)
+- `feat!(scope):` or `BREAKING CHANGE:` → Major version bump (1.0.0 → 2.0.0)
+- All other types → Patch version bump (1.0.0 → 1.0.1)
+
+## Security Considerations
+
+- Validate all inputs
+- Use proper error handling
+- Follow security best practices
+- Keep dependencies updated
+
+## Performance Guidelines
+
+- Optimize for speed and memory usage
+- Use efficient algorithms
+- Implement proper caching where appropriate
+- Monitor performance metrics

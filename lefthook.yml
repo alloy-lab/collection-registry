@@ -28,6 +28,9 @@ pre-push:
     build:
       run: pnpm build
       fail_text: '❌ Build failed. Fix compilation errors.'
+    commitlint:
+      run: pnpm commitlint --from HEAD~1 --to HEAD --verbose
+      fail_text: '❌ Commit messages do not follow conventional commit format.'
 
 # Skip hooks for certain file patterns
 skip_output:
@@ -44,10 +47,10 @@ skip_output:
 
 # Colors for better output
 colors:
-  - red
-  - green
-  - yellow
-  - blue
-  - magenta
-  - cyan
-  - white
+  red: true
+  green: true
+  yellow: true
+  blue: true
+  magenta: true
+  cyan: true
+  white: true

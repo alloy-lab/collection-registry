@@ -311,6 +311,16 @@ Enable debug logging:
 DEBUG=collectionRegistry npx collectionRegistry
 ```
 
+## Versioning
+
+This package uses [Conventional Commits](https://conventionalcommits.org/) for automatic versioning:
+
+- `feat:` → Minor version bump (1.0.0 → 1.1.0)
+- `fix:` → Patch version bump (1.0.0 → 1.0.1)
+- `feat!:` or `BREAKING CHANGE:` → Major version bump (1.0.0 → 2.0.0)
+
+See [VERSIONING.md](./VERSIONING.md) for detailed information.
+
 ## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.

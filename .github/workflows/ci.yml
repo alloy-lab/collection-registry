@@ -75,6 +75,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: npm-publish
 
     steps:
       - name: Checkout code
@@ -99,7 +100,51 @@ jobs:
       - name: Build package
         run: pnpm build
 
+      - name: Check for version bump needed
+        id: version-check
+        run: |
+          # Check if there are any commits since last tag
+          if git describe --tags --exact-match HEAD >/dev/null 2>&1; then
+            echo "no-bump=true" >> $GITHUB_OUTPUT
+            echo "No version bump needed - already tagged"
+          else
+            echo "no-bump=false" >> $GITHUB_OUTPUT
+            echo "Version bump needed"
+          fi
+
+      - name: Auto-increment version
+        if: steps.version-check.outputs.no-bump == 'false'
+        run: |
+          # Get the last commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+
+          # Determine version bump type based on conventional commits
+          if echo "$COMMIT_MSG" | grep -q "^feat("; then
+            echo "Bumping minor version (new feature)"
+            pnpm version minor --no-git-tag-version
+          elif echo "$COMMIT_MSG" | grep -q "^fix("; then
+            echo "Bumping patch version (bug fix)"
+            pnpm version patch --no-git-tag-version
+          elif echo "$COMMIT_MSG" | grep -q "^BREAKING CHANGE\|^feat!(\|^fix!("; then
+            echo "Bumping major version (breaking change)"
+            pnpm version major --no-git-tag-version
+          else
+            echo "Bumping patch version (default)"
+            pnpm version patch --no-git-tag-version
+          fi
+
+          # Create and push tag
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json
+          git commit -m "chore(release): bump version to $NEW_VERSION"
+          git tag "v$NEW_VERSION"
+          git push origin main
+          git push origin "v$NEW_VERSION"
+
       - name: Publish to npm
+        if: steps.version-check.outputs.no-bump == 'false'
         run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
