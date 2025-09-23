@@ -25,7 +25,7 @@ export function generateCollectionInterface(
   const { includeUtilityTypes = true } = options;
 
   const fieldDefinitions = fields
-    .map(field => {
+    .map((field) => {
       const optional = field.required ? '' : '?';
       const type = mapFieldTypeToTypeScript(field.type, field.name);
       return `  ${field.name}${optional}: ${type};`;
@@ -60,7 +60,7 @@ export function generateAllCollectionInterfaces(
   options: GeneratorOptions = {}
 ): string {
   const interfaces = collections
-    .map(collection => generateCollectionInterface(collection, options))
+    .map((collection) => generateCollectionInterface(collection, options))
     .join('\n\n');
 
   const baseTypes = options.includeBaseTypes ? generateBaseTypes() : '';
@@ -143,7 +143,7 @@ export interface NavigationItem {
  */
 export function generateTypeIndex(collections: CollectionMetadata[]): string {
   const collectionExports = collections
-    .map(collection => {
+    .map((collection) => {
       const { displayName } = collection;
       return `export type { ${displayName}, ${displayName}Input, ${displayName}Update, ${displayName}Create } from './${collection.slug}';`;
     })
@@ -163,7 +163,7 @@ export * from './base';
 ${collectionExports}
 
 // Re-export commonly used types for convenience
-${collections.map(c => `export type { ${c.displayName} } from './${c.slug}';`).join('\n')}`;
+${collections.map((c) => `export type { ${c.displayName} } from './${c.slug}';`).join('\n')}`;
 }
 
 /**
@@ -221,7 +221,7 @@ export function generateValidationTypes(
   const { displayName, fields } = collection;
 
   const validationFields = fields
-    .map(field => {
+    .map((field) => {
       const rules = [];
 
       if (field.required) {

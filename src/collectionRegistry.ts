@@ -73,9 +73,9 @@ class CollectionRegistry {
 
     const collectionFiles = fs
       .readdirSync(this.config.collectionsPath)
-      .filter(file => file.endsWith('.ts') && file !== 'index.ts');
+      .filter((file) => file.endsWith('.ts') && file !== 'index.ts');
 
-    collectionFiles.forEach(file => {
+    collectionFiles.forEach((file) => {
       const filePath = path.join(this.config.collectionsPath, file);
       const content = fs.readFileSync(filePath, 'utf8');
       const metadata = extractCollectionMetadata(content, file);
@@ -121,7 +121,7 @@ class CollectionRegistry {
     this.generateBaseTypes();
 
     // Generate individual collection type files
-    Array.from(this.collections.values()).forEach(collection => {
+    Array.from(this.collections.values()).forEach((collection) => {
       this.generateCollectionTypeFile(collection);
     });
 
@@ -285,7 +285,7 @@ export type { Email } from './types/users';
    * Generate individual collection client files
    */
   private generateCollectionClients(): void {
-    Array.from(this.collections.values()).forEach(collection => {
+    Array.from(this.collections.values()).forEach((collection) => {
       this.generateCollectionClient(collection);
     });
 
@@ -437,11 +437,11 @@ export const ${slug}Client = new ${displayName}Client();
     const clientFiles = fs
       .readdirSync(clientsDir)
       .filter(
-        file =>
+        (file) =>
           file.endsWith('.ts') && file !== 'base.ts' && file !== 'index.ts'
       );
 
-    clientFiles.forEach(file => {
+    clientFiles.forEach((file) => {
       const slug = file.replace('.ts', '');
 
       // Skip site-settings as it's a global, not a collection
@@ -470,9 +470,9 @@ export const ${slug}Client = new ${displayName}Client();
 
     const typeFiles = fs
       .readdirSync(typesDir)
-      .filter(file => file.endsWith('.ts') && file !== 'base.ts');
+      .filter((file) => file.endsWith('.ts') && file !== 'base.ts');
 
-    typeFiles.forEach(file => {
+    typeFiles.forEach((file) => {
       const slug = file.replace('.ts', '');
 
       // Skip site-settings as it's a global, not a collection
@@ -502,7 +502,7 @@ export const ${slug}Client = new ${displayName}Client();
 
     const exports = collections
       .map(
-        collection =>
+        (collection) =>
           `export { ${collection.slug}Client, ${collection.displayName}Client } from './${collection.slug}';`
       )
       .join('\n');
@@ -535,7 +535,7 @@ export type { PayloadResponse, QueryOptions } from '../types';
     const collections = Array.from(this.collections.values());
 
     const legacyMethods = collections
-      .map(collection => {
+      .map((collection) => {
         const {
           slug,
           displayName,
@@ -624,7 +624,7 @@ export type {
 
     const routesPath = path.join(this.config.outputPath, 'routes');
 
-    Array.from(this.collections.values()).forEach(collection => {
+    Array.from(this.collections.values()).forEach((collection) => {
       if (!collection.hasSlug) return;
 
       // Generate index route
@@ -655,7 +655,7 @@ export type {
     console.log('\n📊 Collection Registry Report');
     console.log('================================');
 
-    Array.from(this.collections.values()).forEach(collection => {
+    Array.from(this.collections.values()).forEach((collection) => {
       console.log(`\n📄 ${collection.displayName} (${collection.slug})`);
       console.log(`   Fields: ${collection.fields.length}`);
       console.log(`   Has Slug: ${collection.hasSlug ? '✅' : '❌'}`);

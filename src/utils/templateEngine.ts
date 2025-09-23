@@ -14,7 +14,7 @@ export function generateCollectionType(collection: CollectionMetadata): string {
   const { displayName, fields } = collection;
 
   const fieldDefinitions = fields
-    .map(field => {
+    .map((field) => {
       const optional = field.required ? '' : '?';
       const type = getTypeScriptType(field.type);
       return `  ${field.name}${optional}: ${type};`;

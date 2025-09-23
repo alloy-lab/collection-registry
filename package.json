@@ -18,14 +18,22 @@
     "dev": "tsc --watch",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
     "lint": "eslint src --ext .js,.ts",
+    "lint:fix": "eslint src --ext .js,.ts --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run test:run && npm run lint && npm run typecheck",
     "prepare": "lefthook install && npm run build",
     "publish": "npm publish --access public",
     "hooks:install": "lefthook install",
-    "hooks:uninstall": "lefthook uninstall"
+    "hooks:uninstall": "lefthook uninstall",
+    "version": "npm run format && git add -A",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
     "payload",
@@ -52,6 +60,7 @@
   "devDependencies": {
     "@eslint/js": "^9.16.0",
     "@types/node": "^24.5.2",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.16.0",
     "lefthook": "^1.13.2",
     "prettier": "^3.6.2",

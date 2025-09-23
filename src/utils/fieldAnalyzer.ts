@@ -98,14 +98,14 @@ export function extractCollectionMetadata(
       pluralName: pluralize(displayName),
       filename,
       fields,
-      hasSlug: fields.some(f => f.name === 'slug'),
-      hasStatus: fields.some(f => f.name === 'status'),
-      hasSEO: fields.some(f => f.name === 'seo'),
-      hasNavigation: fields.some(f => f.name === 'showInNavigation'),
-      hasFeaturedImage: fields.some(f => f.name === 'featuredImage'),
-      hasExcerpt: fields.some(f => f.name === 'excerpt'),
-      hasTags: fields.some(f => f.name === 'tags'),
-      hasAuthor: fields.some(f => f.name === 'author'),
+      hasSlug: fields.some((f) => f.name === 'slug'),
+      hasStatus: fields.some((f) => f.name === 'status'),
+      hasSEO: fields.some((f) => f.name === 'seo'),
+      hasNavigation: fields.some((f) => f.name === 'showInNavigation'),
+      hasFeaturedImage: fields.some((f) => f.name === 'featuredImage'),
+      hasExcerpt: fields.some((f) => f.name === 'excerpt'),
+      hasTags: fields.some((f) => f.name === 'tags'),
+      hasAuthor: fields.some((f) => f.name === 'author'),
       isPublic: content.includes('read: () => true'),
     };
   } catch (error) {
@@ -158,7 +158,7 @@ export function getTypeScriptType(
  */
 export function deduplicateFields(fields: FieldMetadata[]): FieldMetadata[] {
   const seen = new Set();
-  return fields.filter(field => {
+  return fields.filter((field) => {
     if (seen.has(field.name)) {
       return false;
     }
