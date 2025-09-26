@@ -79,6 +79,61 @@ const config = {
 };
 ```
 
+### Advanced Configuration Options
+
+The library is designed to be transparent and customizable. You can override its assumptions:
+
+```javascript
+const config = {
+  // Basic configuration
+  collectionsPath: './src/collections',
+  outputPath: './generated',
+  typesPath: './payload-types.ts',
+
+  // Field Detection Customization
+  fieldMappings: {
+    slugField: 'urlSlug', // Use 'urlSlug' instead of 'slug'
+    statusField: 'publishStatus', // Use 'publishStatus' instead of 'status'
+    seoField: 'metaData', // Use 'metaData' instead of 'seo'
+    navigationField: 'showInMenu', // Use 'showInMenu' instead of 'showInNavigation'
+    featuredImageField: 'heroImage', // Use 'heroImage' instead of 'featuredImage'
+    excerptField: 'summary', // Use 'summary' instead of 'excerpt'
+    tagsField: 'categories', // Use 'categories' instead of 'tags'
+    authorField: 'writer', // Use 'writer' instead of 'author'
+  },
+
+  // Status Value Customization
+  statusValues: {
+    draft: 'draft',
+    published: 'live', // Use 'live' instead of 'published'
+    scheduled: 'scheduled',
+    archived: 'hidden', // Use 'hidden' instead of 'archived'
+  },
+
+  // Template Customization
+  templates: {
+    collectionType: `
+      export interface {{collectionName}} {
+        id: string;
+        {{#each fields}}
+        {{name}}: {{type}};
+        {{/each}}
+      }
+    `,
+    apiClient: `
+      export class {{collectionName}}Client {
+        async get{{collectionName}}s(): Promise<{{collectionName}}[]> {
+          // Custom implementation
+        }
+      }
+    `,
+  },
+
+  // Debug Mode
+  debug: true, // Enable detailed logging of the analysis process
+};
+```
+
 ## Generated Files
 
 The tool generates the following files in your output directory:
@@ -100,6 +155,42 @@ The tool generates the following files in your output directory:
 
 - `{collection}._index.tsx` - Collection index route
 - `{collection}.$slug.tsx` - Collection detail route
+
+## 🔍 How It Works (Transparent Process)
+
+This library is **not a black box**. Here's exactly what it does:
+
+### 1. Collection Scanning
+
+The library reads your Payload CMS collection files and extracts:
+
+- Collection metadata (slug, displayName, pluralName)
+- Field definitions and types
+- Common patterns (slug, status, SEO, navigation, etc.)
+
+### 2. Field Analysis
+
+For each collection, it analyzes fields to detect:
+
+- **Slug fields** - URL-friendly identifiers (`name: 'slug'`, `type: 'text'`)
+- **Status fields** - Draft/published states (`name: 'status'`, `type: 'select'`)
+- **SEO fields** - Meta data groups (`name: 'seo'`, `type: 'group'`)
+- **Navigation fields** - Menu visibility (`name: 'showInNavigation'`, `type: 'checkbox'`)
+- **Media fields** - Featured images (`name: 'featuredImage'`, `type: 'upload'`)
+- **Content fields** - Rich text, excerpts (`name: 'excerpt'`, `type: 'textarea'`)
+- **Taxonomy fields** - Tags, categories, authors (`name: 'tags'`, `type: 'array'`)
+
+### 3. Type Generation
+
+Creates TypeScript interfaces based on:
+
+- Payload field types → TypeScript types
+- Detected patterns → Specialized types
+- Collection structure → Complete interfaces
+
+### 4. Code Generation
+
+Generates ready-to-use code using configurable templates.
 
 ## Collection Analysis
 
@@ -284,6 +375,83 @@ const customTypeMap = {
 };
 ```
 
+## 🔧 Understanding the Internal Logic
+
+### Field Detection Algorithm
+
+The library uses pattern matching to detect common fields. Here's exactly how it works:
+
+```typescript
+// Slug Detection
+if (field.name === 'slug' && field.type === 'text') {
+  return { hasSlug: true, slugField: field.name };
+}
+
+// Status Detection
+if (field.name === 'status' && field.type === 'select') {
+  const options = field.options || [];
+  const hasDraft = options.some((opt) => opt.value === 'draft');
+  const hasPublished = options.some((opt) => opt.value === 'published');
+  return { hasStatus: true, statusField: field.name };
+}
+
+// SEO Detection
+if (field.name === 'seo' && field.type === 'group') {
+  const seoFields = field.fields || [];
+  const hasTitle = seoFields.some((f) => f.name === 'title');
+  const hasDescription = seoFields.some((f) => f.name === 'description');
+  return { hasSEO: true, seoField: field.name };
+}
+```
+
+### Type Mapping Logic
+
+The library maps Payload field types to TypeScript types:
+
+```typescript
+const typeMap = {
+  text: 'string',
+  textarea: 'string',
+  richText: 'any', // Rich text content
+  number: 'number',
+  date: 'string', // ISO date string
+  select: 'string | undefined',
+  checkbox: 'boolean',
+  upload: 'string | Media', // File ID or Media object
+  relationship: 'string | RelatedType', // ID or related object
+  array: 'ArrayType[]',
+  group: 'GroupType',
+  blocks: 'BlockType[]',
+};
+```
+
+### Customization Points
+
+You can override any part of the analysis:
+
+```typescript
+// Custom field analyzer
+class CustomFieldAnalyzer extends FieldAnalyzer {
+  analyzeField(field: any): FieldAnalysis {
+    // Add your custom field detection logic
+    if (field.type === 'customField') {
+      return { type: 'CustomType', hasCustomField: true };
+    }
+    return super.analyzeField(field);
+  }
+}
+
+// Custom type mapper
+class CustomTypeMapper extends TypeMapper {
+  mapPayloadTypeToTypeScript(payloadType: string): string {
+    if (payloadType === 'customField') {
+      return 'CustomType';
+    }
+    return super.mapPayloadTypeToTypeScript(payloadType);
+  }
+}
+```
+
 ## Troubleshooting
 
 ### Common Issues
@@ -303,13 +471,45 @@ const customTypeMap = {
    - Check Prettier configuration
    - Use `--no-format` to skip formatting
 
+4. **Custom field names not detected**
+   - Use `fieldMappings` configuration to map your custom field names
+   - Check the field detection logic in the debug output
+   - Extend the `FieldAnalyzer` class for custom detection
+
+5. **Status values are hard-coded**
+   - Use `statusValues` configuration to customize status values
+   - The library detects status fields but uses configured values for types
+
 ### Debug Mode
 
-Enable debug logging:
+Enable debug logging to see exactly what the library is doing:
 
 ```bash
 DEBUG=collectionRegistry npx collection-registry
 ```
+
+Or programmatically:
+
+```javascript
+const registry = new CollectionRegistry({
+  // ... config
+  debug: true, // Enable detailed logging
+});
+```
+
+This will show you:
+
+- Which collections were found
+- How each field was analyzed
+- What patterns were detected
+- How types were mapped
+- What code was generated
+
+## 📚 Additional Resources
+
+- 📖 [Customization Examples](./examples/customization.md) - How to customize the library
+- 🔧 [Troubleshooting Guide](./TROUBLESHOOTING.md) - Common issues and solutions
+- 🎯 [How It Works](#-how-it-works-transparent-process) - Understanding the internal logic
 
 ## Versioning
 
@@ -325,7 +525,6 @@ See [VERSIONING.md](./VERSIONING.md) for detailed information.
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
 
-- 📖 [Contributing Guide](CONTRIBUTING.md)
 - 🛡️ [Security Policy](SECURITY.md)
 - 🤝 [Code of Conduct](CODE_OF_CONDUCT.md)
 - 🐛 [Bug Reports](.github/ISSUE_TEMPLATE/bug_report.yml)

@@ -35,6 +35,36 @@ export interface CollectionRegistryConfig {
   format?: boolean;
   baseUrl?: string;
   skipExamples?: boolean;
+
+  // Field Detection Customization
+  fieldMappings?: {
+    slugField?: string; // Custom slug field name (default: 'slug')
+    statusField?: string; // Custom status field name (default: 'status')
+    seoField?: string; // Custom SEO field name (default: 'seo')
+    navigationField?: string; // Custom navigation field name (default: 'showInNavigation')
+    featuredImageField?: string; // Custom featured image field name (default: 'featuredImage')
+    excerptField?: string; // Custom excerpt field name (default: 'excerpt')
+    tagsField?: string; // Custom tags field name (default: 'tags')
+    authorField?: string; // Custom author field name (default: 'author')
+  };
+
+  // Status Value Customization
+  statusValues?: {
+    draft?: string; // Draft status value (default: 'draft')
+    published?: string; // Published status value (default: 'published')
+    scheduled?: string; // Scheduled status value (default: 'scheduled')
+    archived?: string; // Archived status value (default: 'archived')
+  };
+
+  // Template Customization
+  templates?: {
+    collectionType?: string; // Custom collection type template
+    apiClient?: string; // Custom API client template
+    routes?: string; // Custom routes template
+  };
+
+  // Debug Mode
+  debug?: boolean; // Enable detailed logging (default: false)
 }
 
 class CollectionRegistry {
@@ -54,7 +84,34 @@ class CollectionRegistry {
       format: config.format || false,
       baseUrl: config.baseUrl || 'process.env.CMS_API_URL',
       skipExamples: config.skipExamples !== false, // Default to true
-      ...config,
+
+      // Field mappings with defaults
+      fieldMappings: {
+        slugField: 'slug',
+        statusField: 'status',
+        seoField: 'seo',
+        navigationField: 'showInNavigation',
+        featuredImageField: 'featuredImage',
+        excerptField: 'excerpt',
+        tagsField: 'tags',
+        authorField: 'author',
+        ...config.fieldMappings,
+      },
+
+      // Status values with defaults
+      statusValues: {
+        draft: 'draft',
+        published: 'published',
+        scheduled: 'scheduled',
+        archived: 'archived',
+        ...config.statusValues,
+      },
+
+      // Templates with defaults (will be set later)
+      templates: config.templates || {},
+
+      // Debug mode
+      debug: config.debug || false,
     };
   }
 
@@ -62,6 +119,10 @@ class CollectionRegistry {
    * Scan CMS collections directory and extract collection metadata
    */
   scanCollections(): void {
+    if (this.config.debug) {
+      console.log('🔍 Collection Registry Debug Mode');
+      console.log(`📁 Scanning collections in: ${this.config.collectionsPath}`);
+    }
     console.log('🔍 Scanning Payload collections...');
 
     if (!fs.existsSync(this.config.collectionsPath)) {

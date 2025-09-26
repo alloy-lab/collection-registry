@@ -3,6 +3,15 @@
  *
  * This utility extracts and analyzes field metadata from Payload collection files
  * to generate appropriate TypeScript types and API client methods.
+ *
+ * The analysis process is transparent and works by:
+ * 1. Parsing collection file content using regex patterns
+ * 2. Extracting field definitions (name, type, required)
+ * 3. Detecting common patterns (slug, status, SEO, etc.)
+ * 4. Mapping Payload types to TypeScript types
+ *
+ * This approach is intentionally simple and predictable, making it easy to
+ * understand and customize for different use cases.
  */
 
 // Type definitions
@@ -31,6 +40,34 @@ export interface CollectionMetadata {
 
 /**
  * Analyze collection fields from file content
+ *
+ * This function parses Payload CMS collection file content and extracts field definitions.
+ * It uses regex patterns to find field definitions in the collection configuration.
+ *
+ * The parsing logic looks for:
+ * - Field names: `name: 'fieldName'` or `name: "fieldName"`
+ * - Field types: `type: 'fieldType'` or `type: "fieldType"`
+ * - Required flags: `required: true`
+ *
+ * @param content - The raw file content of a Payload collection file
+ * @returns Array of FieldMetadata objects representing each field
+ *
+ * @example
+ * ```typescript
+ * const content = `
+ * fields: [
+ *   { name: 'title', type: 'text', required: true },
+ *   { name: 'slug', type: 'text', required: true },
+ *   { name: 'status', type: 'select', options: [...] }
+ * ]
+ * `;
+ * const fields = analyzeFields(content);
+ * // Returns: [
+ * //   { name: 'title', type: 'text', required: true },
+ * //   { name: 'slug', type: 'text', required: true },
+ * //   { name: 'status', type: 'select', required: false }
+ * // ]
+ * ```
  */
 export function analyzeFields(content: string): FieldMetadata[] {
   const fields: FieldMetadata[] = [];
@@ -64,6 +101,57 @@ export function analyzeFields(content: string): FieldMetadata[] {
 
 /**
  * Extract collection metadata from file content
+ *
+ * This function analyzes a Payload CMS collection file and extracts comprehensive
+ * metadata including field patterns and collection properties.
+ *
+ * The analysis process:
+ * 1. Extracts the collection slug from `slug: 'collection-name'`
+ * 2. Determines display name from `useAsTitle` or derives from slug
+ * 3. Analyzes all fields to detect common patterns
+ * 4. Determines if the collection is public (has `read: () => true`)
+ *
+ * Pattern detection looks for these specific field names:
+ * - `slug` - URL-friendly identifier
+ * - `status` - Draft/published state management
+ * - `seo` - SEO metadata group
+ * - `showInNavigation` - Navigation menu visibility
+ * - `featuredImage` - Featured image field
+ * - `excerpt` - Content summary field
+ * - `tags` - Content categorization
+ * - `author` - Content attribution
+ *
+ * @param content - The raw file content of a Payload collection file
+ * @param filename - The filename for error reporting
+ * @returns CollectionMetadata object or null if parsing fails
+ *
+ * @example
+ * ```typescript
+ * const content = `
+ * export const Posts: CollectionConfig = {
+ *   slug: 'posts',
+ *   admin: { useAsTitle: 'title' },
+ *   access: { read: () => true },
+ *   fields: [
+ *     { name: 'title', type: 'text', required: true },
+ *     { name: 'slug', type: 'text', required: true },
+ *     { name: 'status', type: 'select', options: [...] }
+ *   ]
+ * };
+ * `;
+ * const metadata = extractCollectionMetadata(content, 'Posts.ts');
+ * // Returns: {
+ * //   slug: 'posts',
+ * //   displayName: 'Posts',
+ * //   pluralName: 'Posts',
+ * //   filename: 'Posts.ts',
+ * //   fields: [...],
+ * //   hasSlug: true,
+ * //   hasStatus: true,
+ * //   hasSEO: false,
+ * //   // ... other pattern flags
+ * // }
+ * ```
  */
 export function extractCollectionMetadata(
   content: string,
@@ -119,6 +207,31 @@ export function extractCollectionMetadata(
 
 /**
  * Map Payload field types to TypeScript types
+ *
+ * This function converts Payload CMS field types to their TypeScript equivalents.
+ * It includes special handling for common field patterns and provides sensible
+ * defaults for unknown types.
+ *
+ * The mapping logic:
+ * 1. Maps basic Payload types to TypeScript types
+ * 2. Provides special handling for specific field names (status, template)
+ * 3. Returns 'any' for unknown types as a fallback
+ *
+ * Special field name handling:
+ * - `status` fields with `select` type → `"draft" | "published"`
+ * - `template` fields with `select` type → `"default" | "full-width" | "sidebar" | "landing"`
+ *
+ * @param payloadType - The Payload CMS field type (e.g., 'text', 'select', 'upload')
+ * @param fieldName - The field name for special handling (optional)
+ * @returns TypeScript type string
+ *
+ * @example
+ * ```typescript
+ * getTypeScriptType('text'); // 'string'
+ * getTypeScriptType('select', 'status'); // '"draft" | "published"'
+ * getTypeScriptType('upload'); // 'Media'
+ * getTypeScriptType('unknown'); // 'any'
+ * ```
  */
 export function getTypeScriptType(
   payloadType: string,
