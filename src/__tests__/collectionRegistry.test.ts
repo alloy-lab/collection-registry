@@ -92,11 +92,11 @@ describe('Field Analyzer', () => {
 
     const metadata = extractCollectionMetadata(content, 'Posts.ts');
     expect(metadata).toBeTruthy();
-    expect(metadata.slug).toBe('posts');
-    expect(metadata.displayName).toBe('Posts');
-    expect(metadata.pluralName).toBe('Posts');
-    expect(metadata.hasSlug).toBe(true);
-    expect(metadata.hasStatus).toBe(true);
-    expect(metadata.fields).toHaveLength(3);
+    expect(metadata?.slug).toBe('posts');
+    expect(metadata?.displayName).toBe('Posts');
+    expect(metadata?.pluralName).toBe('Posts');
+    expect(metadata?.hasSlug).toBe(true);
+    expect(metadata?.hasStatus).toBe(true);
+    expect(metadata?.fields).toHaveLength(3);
   });
 });
