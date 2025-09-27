@@ -14,10 +14,16 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import {
+  generateSEOHooks,
+  generateSEORoutes,
+  generateSEOSitemap,
+  generateSEOUtilities,
+} from './generators/seo.js';
 import type { CollectionMetadata } from './utils/fieldAnalyzer.js';
 import {
-  extractCollectionMetadata,
   deduplicateFields,
+  extractCollectionMetadata,
   getTypeScriptType,
   singularize,
 } from './utils/fieldAnalyzer.js';
@@ -710,6 +716,69 @@ export type {
   }
 
   /**
+   * Generate SEO utilities for collections
+   */
+  generateSEOUtilities(): void {
+    console.log('🔍 Generating SEO utilities...');
+
+    for (const [slug, collection] of this.collections) {
+      if (collection.hasSEO) {
+        // Generate SEO utilities
+        const seoUtilsContent = generateSEOUtilities(collection);
+        const seoUtilsPath = path.join(
+          this.config.outputPath,
+          'seo',
+          `${slug}.ts`
+        );
+
+        // Ensure directory exists
+        fs.mkdirSync(path.dirname(seoUtilsPath), { recursive: true });
+
+        fs.writeFileSync(seoUtilsPath, seoUtilsContent);
+        console.log(`  ✅ Generated SEO utilities: ${seoUtilsPath}`);
+
+        // Generate SEO hooks
+        const seoHooksContent = generateSEOHooks(collection);
+        const seoHooksPath = path.join(
+          this.config.outputPath,
+          'hooks',
+          `use${collection.displayName}SEO.ts`
+        );
+
+        // Ensure directory exists
+        fs.mkdirSync(path.dirname(seoHooksPath), { recursive: true });
+
+        fs.writeFileSync(seoHooksPath, seoHooksContent);
+        console.log(`  ✅ Generated SEO hooks: ${seoHooksPath}`);
+
+        // Generate SEO routes
+        const seoRoutesContent = generateSEORoutes(collection);
+        const seoRoutesPath = path.join(
+          this.config.outputPath,
+          'seo',
+          `${slug}-routes.ts`
+        );
+
+        fs.writeFileSync(seoRoutesPath, seoRoutesContent);
+        console.log(`  ✅ Generated SEO routes: ${seoRoutesPath}`);
+
+        // Generate SEO sitemap utilities
+        if (collection.hasSlug) {
+          const seoSitemapContent = generateSEOSitemap(collection);
+          const seoSitemapPath = path.join(
+            this.config.outputPath,
+            'seo',
+            `${slug}-sitemap.ts`
+          );
+
+          fs.writeFileSync(seoSitemapPath, seoSitemapContent);
+          console.log(`  ✅ Generated SEO sitemap: ${seoSitemapPath}`);
+        }
+      }
+    }
+  }
+
+  /**
    * Generate a summary report
    */
   generateReport(): void {
@@ -774,6 +843,7 @@ export type {
     this.generateWebTypes();
     this.generateClientMethods();
     this.generateRouteFiles();
+    this.generateSEOUtilities();
     this.formatGeneratedFiles();
     this.generateReport();
 
