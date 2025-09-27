@@ -32,6 +32,8 @@ export default {
         'config', // Configuration
         'ci', // CI/CD
         'release', // Release process
+        'tests', // Test-related changes
+        'test', // Test-related changes (alternative)
       ],
     ],
     'subject-case': [
