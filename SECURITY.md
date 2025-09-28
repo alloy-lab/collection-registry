@@ -22,7 +22,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 Please report security vulnerabilities privately by:
 
-- **Email**: Send details to [security@alloylab.com](mailto:security@alloylab.com)
+- **Email**: Send details to [security@alloylab.net](mailto:security@alloylab.net)
 - **GitHub Security Advisories**: Use GitHub's private vulnerability reporting feature
 
 ### 3. Include the following information
@@ -122,7 +122,7 @@ Security updates will be:
 
 For security-related questions or concerns:
 
-- **Email**: [security@alloylab.com](mailto:security@alloylab.com)
+- **Email**: [security@alloylab.net](mailto:security@alloylab.net)
 - **GitHub**: Use GitHub's private vulnerability reporting
 
 ## Acknowledgments
