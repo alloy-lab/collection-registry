@@ -178,7 +178,7 @@ export function generateCollectionClientMethods(
   methods.push(`  /**
    * Get all ${pluralName.toLowerCase()} with optional filtering
    */
-  async get${pluralName}(options?: QueryOptions): Promise<PayloadResponse<${displayName}>> {
+  async get${pluralName}List(options?: QueryOptions): Promise<PayloadResponse<${displayName}>> {
     const params = this.buildQueryParams(options);
     return this.fetch<PayloadResponse<${displayName}>>(\`/${slug}?\${params.toString()}\`);
   }`);
@@ -212,7 +212,7 @@ export function generateCollectionClientMethods(
   async getPublished${pluralName}(
     options?: Omit<QueryOptions, 'where'>
   ): Promise<${displayName}[]> {
-    const response = await this.get${pluralName}({
+    const response = await this.get${pluralName}List({
       ...options,
       where: {
         status: { equals: 'published' },
@@ -228,7 +228,7 @@ export function generateCollectionClientMethods(
    * Get ${pluralName.toLowerCase()} for navigation menu
    */
   async get${pluralName}ForNavigation(): Promise<${displayName}[]> {
-    const response = await this.get${pluralName}({
+    const response = await this.get${pluralName}List({
       where: {
         showInNavigation: { equals: true },
         status: { equals: 'published' },

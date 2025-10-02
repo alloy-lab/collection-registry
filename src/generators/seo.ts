@@ -24,7 +24,7 @@ export function generateSEOUtilities(collection: CollectionMetadata): string {
  */
 
 import { generateSEO, generateMetaTags } from '@alloylab/seo';
-import type { ${collectionName}, SiteSettings } from './types';
+import type { ${collectionName}, SiteSettings } from '../types';
 
 /**
  * Generate SEO data for ${collectionSlug}
@@ -35,7 +35,7 @@ export function generate${collectionName}SEO(
   baseUrl?: string
 ) {
   return generateSEO(
-    ${collectionSlug},
+    ${collectionSlug} as any,
     siteSettings,
     'page',
     baseUrl
@@ -87,7 +87,7 @@ export function generateSEOHooks(collection: CollectionMetadata): string {
  */
 
 import { useSEO } from '@alloylab/seo';
-import type { ${collectionName}, SiteSettings } from './types';
+import type { ${collectionName}, SiteSettings } from '../types';
 
 /**
  * Hook for managing ${collectionSlug} SEO
@@ -99,7 +99,7 @@ export function use${collectionName}SEO(
 ) {
   return useSEO({
     siteSettings,
-    page: ${collectionSlug},
+    page: ${collectionSlug} as any,
     baseUrl,
     type: 'page'
   });
@@ -126,7 +126,7 @@ export function generateSEORoutes(collection: CollectionMetadata): string {
  */
 
 import { generateSEO, generateMetaTags } from '@alloylab/seo';
-import type { ${collectionName}, SiteSettings } from './types';
+import type { ${collectionName}, SiteSettings } from '../types';
 
 /**
  * Generate SEO data for ${collectionSlug} route
@@ -137,7 +137,7 @@ export async function get${collectionName}SEO(
   baseUrl: string
 ) {
   return generateSEO(
-    ${collectionSlug},
+    ${collectionSlug} as any,
     siteSettings,
     'page',
     baseUrl
@@ -164,6 +164,7 @@ export async function get${collectionName}MetaTags(
 export function generateSEOSitemap(collection: CollectionMetadata): string {
   const collectionName = collection.displayName;
   const collectionSlug = collection.slug;
+  const pluralName = collection.pluralName;
   const hasSeo = collection.hasSEO;
   const hasSlug = collection.hasSlug;
 
@@ -178,25 +179,24 @@ export function generateSEOSitemap(collection: CollectionMetadata): string {
  */
 
 import { generateSitemapUrls } from '@alloylab/seo';
-import type { ${collectionName}, SiteSettings } from './types';
+import type { ${collectionName}, SiteSettings } from '../types';
 
 /**
  * Generate sitemap URLs for ${collectionSlug} collection
  */
 export function generate${collectionName}SitemapUrls(
-  ${collectionSlug}s: ${collectionName}[],
+  ${pluralName.toLowerCase()}: ${collectionName}[],
   siteSettings: SiteSettings,
   baseUrl: string
 ) {
   return generateSitemapUrls(
-    ${collectionSlug}s,
+    ${pluralName.toLowerCase()} as any,
     siteSettings,
     {
       baseUrl,
-      collectionSlug: '${collectionSlug}',
-      slugField: 'slug',
-      statusField: 'status',
-      publishedStatus: 'published'
+      includeHomepage: false,
+      pagePriority: 0.8,
+      defaultChangefreq: 'weekly'
     }
   );
 }

@@ -87,12 +87,16 @@ export function analyzeFields(content: string): FieldMetadata[] {
       .match(/type:\s*['"`]([^'"`]+)['"`]/);
     const fieldType = typeMatch && typeMatch[1] ? typeMatch[1] : 'text';
 
+    // Status fields should be required for SEO compatibility
+    const isRequired =
+      content
+        .substring(fieldStart, fieldStart + 200)
+        .includes('required: true') || fieldName === 'status';
+
     fields.push({
       name: fieldName,
       type: fieldType,
-      required: content
-        .substring(fieldStart, fieldStart + 200)
-        .includes('required: true'),
+      required: isRequired,
     });
   }
 
@@ -292,6 +296,8 @@ export function pluralize(str: string): string {
   if (str === 'Users') return 'Users';
   if (str === 'Posts') return 'Posts'; // Already plural
   if (str === 'Examples') return 'Examples'; // Already plural
+  if (str === 'Tutorials') return 'Tutorials'; // Already plural
+  if (str === 'Documentation') return 'Documentation'; // Already plural
 
   // Standard pluralization
   if (str.endsWith('y')) {

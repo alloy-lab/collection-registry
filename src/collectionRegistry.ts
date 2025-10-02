@@ -628,7 +628,7 @@ export type { PayloadResponse, QueryOptions } from '../types';
 
         methods.push(`  // ${displayName}`);
         methods.push(
-          `  get${pluralName}: (args?: any) => ${slug}Client.get${pluralName}(args),`
+          `  get${pluralName}List: (args?: any) => ${slug}Client.get${pluralName}List(args),`
         );
 
         if (hasSlug) {
