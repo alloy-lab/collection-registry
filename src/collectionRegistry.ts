@@ -291,6 +291,21 @@ export type ${displayName}Update = Partial<${displayName}Input>;
    * Generate types index file
    */
   private generateTypesIndex(): void {
+    const collections = Array.from(this.collections.values());
+
+    // Generate collection exports
+    const collectionExports = collections
+      .map((collection) => `export * from './types/${collection.slug}';`)
+      .join('\n');
+
+    // Generate re-export statements for commonly used types
+    const reExports = collections
+      .map(
+        (collection) =>
+          `export type { ${collection.displayName} } from './types/${collection.slug}';`
+      )
+      .join('\n');
+
     const indexContent = `/**
  * Types index - exports all collection types
  * Generated from Payload CMS collections
@@ -302,16 +317,14 @@ export type ${displayName}Update = Partial<${displayName}Input>;
 export * from './types/base';
 
 // Collection types
-export * from './types/media';
-export * from './types/pages';
+${collectionExports}
+
+// Global types
 export * from './types/site-settings';
-export * from './types/users';
 
 // Re-export commonly used types for convenience
-export type { Media } from './types/media';
-export type { Pages } from './types/pages';
+${reExports}
 export type { SiteSettings } from './types/site-settings';
-export type { Email } from './types/users';
 `;
 
     const typesIndexPath = path.join(this.config.outputPath, 'types.ts');
