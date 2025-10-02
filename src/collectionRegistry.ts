@@ -615,30 +615,42 @@ export type { PayloadResponse, QueryOptions } from '../types';
 
         methods.push(`  // ${displayName}`);
         methods.push(
-          `  get${pluralName}: ${slug}Client.get${pluralName}.bind(${slug}Client),`
+          `  get${pluralName}: (args?: any) => ${slug}Client.get${pluralName}(args),`
         );
 
         if (hasSlug) {
           methods.push(
-            `  get${singularize(displayName)}: ${slug}Client.get${singularize(displayName)}.bind(${slug}Client),`
+            `  get${singularize(displayName)}: (args?: any) => ${slug}Client.get${singularize(displayName)}(args),`
           );
         }
 
         if (hasStatus) {
           methods.push(
-            `  getPublished${pluralName}: ${slug}Client.getPublished${pluralName}.bind(${slug}Client),`
+            `  getPublished${pluralName}: (args?: any) => ${slug}Client.getPublished${pluralName}(args),`
           );
         }
 
         if (hasNavigation) {
           methods.push(
-            `  get${pluralName}ForNavigation: ${slug}Client.get${pluralName}ForNavigation.bind(${slug}Client),`
+            `  get${pluralName}ForNavigation: () => ${slug}Client.get${pluralName}ForNavigation(),`
           );
         }
 
         return methods.join('\n');
       })
       .join('\n\n');
+
+    const clientImports = collections
+      .map((collection) => `  ${collection.slug}Client`)
+      .join(',\n');
+
+    const clientExports = collections
+      .map((collection) => `  ${collection.slug}Client`)
+      .join(',\n');
+
+    const typeExports = collections
+      .map((collection) => `  ${collection.displayName}`)
+      .join(',\n');
 
     const mainClientContent = `/**
  * Main Payload client - aggregates all collection clients
@@ -648,28 +660,27 @@ export type { PayloadResponse, QueryOptions } from '../types';
  */
 
 import {
-  mediaClient,
-  pagesClient,
+${clientImports},
   siteSettingsClient,
-  usersClient,
 } from './clients';
 
 // Re-export all clients for convenience
-export { mediaClient, pagesClient, siteSettingsClient, usersClient };
+export {
+${clientExports},
+  siteSettingsClient,
+};
 
 // Legacy compatibility - main client object
 export const payloadClient = {
 ${legacyMethods}
 
   // Site Settings
-  getSiteSettings: siteSettingsClient.getSiteSettings.bind(siteSettingsClient),
+  getSiteSettings: () => siteSettingsClient.getSiteSettings(),
 };
 
 // Re-export types
 export type {
-  Email,
-  Media,
-  Pages,
+${typeExports},
   PayloadResponse,
   QueryOptions,
   SiteSettings,
